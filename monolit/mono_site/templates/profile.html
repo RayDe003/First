@@ -1,0 +1,52 @@
+<!-- mic_blog/templates/profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <style>
+    a{
+        text-decoration: none;
+    }
+    </style>
+</head>
+<body>
+
+        <div style="float: left; width: 50%;">
+            <h1>Ваш профиль</h1>
+            {% if user.userprofile.avatar %}
+                <img src="{{ user.userprofile.avatar.url }}" width="250px" height="150px" alt="User Avatar">
+            {% endif %}
+            <p>Ник на платформе: {{ user.username }}</p>
+            <p>О себе: {{ user.userprofile.bio }}</p>
+            <p><a href="{% url 'profile_unauthenticated' %}">Выход</a></p>
+            <p>------------------------------------------------------</p>
+            <p><a href="{% url 'edit_profile' %}">Редактировать профиль</a></p>
+            <p><a href="{% url 'delete_profile' %}">Удалить профиль</a></p>
+            <p>------------------------------------------------------</p>
+            <p><a href="{% url 'create_poll' %}">Создать опрос</a></p>
+        </div>
+
+        <div style="float: right; width: 50%;">
+           <ul>
+    {% for question in all_questions %}
+        {% if question.is_active %}
+            <li>
+                <a href="{% url 'poll_detail' pk=question.pk %}">
+                    {{ question.short_description }} -
+                    {% for choice in question.choices.all %}
+                        {{ choice.choice_text }},
+                    {% endfor %}
+                    - Создано:  {{ question.created_by }}
+                </a>
+            </li>
+        {% else %}
+            <p>Истекло время опроса: {{ question.short_description }}</p>
+        {% endif %}
+    {% endfor %}
+</ul>
+        </div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали опроса</title>
+</head>
+<body>
+
+ <h2>{{ question.question_text }}</h2>
+  <p>Краткое описание: {{ question.short_description }}</p>
+  <p>Полное описание: {{ question.full_description }}</p>
+  {% if question.image %}
+    <img src="{{ question.image.url }}" alt="Poll Image" width="300px" height="300px">
+  {% endif %}
+  <p>Опубликовано: {{ question.pub_date }}</p>
+        <form method="post" action="{% url 'poll_detail' question.id %}">
+            {% csrf_token %}
+            {% for choice in question.choices.all %}
+                <input type="radio" id="choice_{{ choice.id }}" name="choice" value="{{ choice.id }}">
+                <label for="choice_{{ choice.id }}">{{ choice.choice_text }}</label><br>
+            {% endfor %}
+            <input type="submit" value="Vote">
+        </form>
+
+<h3>Результаты:</h3>
+<ul>
+    {% if total_votes %}
+        {% for choice in question.choices.all %}
+            <li>
+                {{ choice.choice_text }} - Votes: {{ choice.votes }}
+                {% if total_votes > 0 %}
+                    ({{ choice.votes|floatformat }}%)
+                {% endif %}
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>Нет голосов</p>
+    {% endif %}
+</ul>
+<p>----------------------------------------</p>
+<p><a href="{% url 'profile' %}">Назад</a></p>
+</body>
+</html>
